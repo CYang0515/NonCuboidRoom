@@ -1,0 +1,60 @@
+model_name: s3d
+data: Structured3D
+pretrained:
+
+num_gpus: 4
+batch_size: 24
+num_workers: 16
+epochs: 51
+lr_step: [30, 40]
+
+Dataset:
+  Structured3D:
+    colorjitter: True
+    downsample: 4
+    input_h: 360
+    input_w: 640
+    max_objs: 20
+
+  SUNRGBD:
+    colorjitter: True
+    downsample: 4
+    input_h: 480
+    input_w: 640
+    max_objs: 20
+
+  NYU303:
+    colorjitter: True
+    downsample: 4
+    input_h: 480
+    input_w: 640
+    max_objs: 20
+
+  CUSTOM:
+    colorjitter: True
+    downsample: 4
+    input_h: 360
+    input_w: 640
+    max_objs: 20
+
+Weights:
+  w_pcenter: 0.03
+  w_psize: 0.005
+  w_poffset: 0.02
+  w_loffset: 0.02
+  w_lalpha: 1
+  w_lregion: 0.03
+  w_pparam: 0.5
+  w_pparam_i: 0.5
+  w_pwdepth: 0.5
+  w_insdepth: 0.5
+
+  falpha_p: 2
+  fbeta_p: 4
+  falpha_l: 2
+  fbeta_l: 4
+
+Solver:
+  method: adam
+  lr: 0.0001
+  weight_decay: 0.0001
