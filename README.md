@@ -16,6 +16,8 @@
 
 (\*: Equal contribution)
 
+<img src='figs/teaser.gif'/>
+
 ## Installation
 
 The code is tested with Ubuntu 16.04, PyTorch v1.5, CUDA 10.1 and cuDNN v7.6.
