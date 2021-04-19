@@ -11,7 +11,7 @@
 [Yi Ma](https://people.eecs.berkeley.edu/~yima/),
 [Xiaojun Yuan](https://faculty.uestc.edu.cn/yuanxiaojun/en/index.htm).
 
-[[Preprint]()]
+[[Preprint](https://arxiv.org/abs/2104.07986)]
 [[Supplementary Material](https://drive.google.com/file/d/1J9CC8ofxt03r2s4w5bGDZLlSL7Ke8oeK/view?usp=sharing)]
 
 (\*: Equal contribution)
@@ -123,6 +123,7 @@ python test.py --pretrained DIR --data CUSTOM
              Yi Ma and
              Xiaojun Yuan},
   journal = {CoRR},
+  volume  = {abs/2104.07986},
   year    = {2021}
 }
 ```
