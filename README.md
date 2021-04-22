@@ -133,3 +133,7 @@ python test.py --pretrained DIR --data CUSTOM
 ## LICENSE
 
 The code is released under the [MIT license](LICENSE). Portions of the code are borrowed from [HRNet-Object-Detection](https://github.com/HRNet/HRNet-Object-Detection) and [CenterNet](https://github.com/xingyizhou/CenterNet).
+
+## Acknowledgements
+
+We would like to thanks [Lei Jin](https://github.com/rxqy) for providing us the code for parsing the layout annotations in SUN RGB-D dataset.
