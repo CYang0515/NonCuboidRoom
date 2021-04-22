@@ -136,4 +136,4 @@ The code is released under the [MIT license](LICENSE). Portions of the code are 
 
 ## Acknowledgements
 
-We would like to thanks [Lei Jin](https://github.com/rxqy) for providing us the code for parsing the layout annotations in SUN RGB-D dataset.
+We would like to thank [Lei Jin](https://github.com/rxqy) for providing us the code for parsing the layout annotations in SUN RGB-D dataset.
