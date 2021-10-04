@@ -11,6 +11,8 @@
 [Yi Ma](https://people.eecs.berkeley.edu/~yima/),
 [Xiaojun Yuan](https://faculty.uestc.edu.cn/yuanxiaojun/en/index.htm).
 
+IEEE/CVF Winter Conference on Applications of Computer Vision (WACV), 2022
+
 [[Preprint](https://arxiv.org/abs/2104.07986)]
 [[Supplementary Material](https://drive.google.com/file/d/1J9CC8ofxt03r2s4w5bGDZLlSL7Ke8oeK/view?usp=sharing)]
 
@@ -116,17 +118,16 @@ python test.py --pretrained DIR --data CUSTOM
 ## Citation
 
 ``` bibtex
-@article{NonCuboidRoom,
-  title   = {Learning to Reconstruct 3D Non-Cuboid Room Layout from a Single RGB Image},
-  author  = {Cheng Yang and
-             Jia Zheng and
-             Xili Dai and
-             Rui Tang and
-             Yi Ma and
-             Xiaojun Yuan},
-  journal = {CoRR},
-  volume  = {abs/2104.07986},
-  year    = {2021}
+@inproceedings{NonCuboidRoom,
+  title     = {Learning to Reconstruct 3D Non-Cuboid Room Layout from a Single RGB Image},
+  author    = {Cheng Yang and
+              Jia Zheng and
+              Xili Dai and
+              Rui Tang and
+              Yi Ma and
+              Xiaojun Yuan},
+  booktitle = {WACV},
+  year      = {2022}
 }
 ```
 
