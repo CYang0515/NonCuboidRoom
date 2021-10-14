@@ -10,13 +10,17 @@ from torch.utils import data
 
 
 class NYU303(data.Dataset):
-    def __init__(self, config, phase='test', cato='nyu'):
+    def __init__(self, config, phase='test', cato='nyu', exam=False):
         self.config = config
         self.phase = phase
         assert phase == 'test'
         self.cato = cato
         self.max_objs = config.max_objs
-        self.img_adr = 'data/SUNRGBD/SUNRGBD/kv1/NYUdata'
+        self.exam = exam
+        if exam:
+            self.img_adr = 'example/'
+        else:
+            self.img_adr = 'data/SUNRGBD/SUNRGBD/kv1/NYUdata'
         self.anno_adr = 'data/SUNRGBD/nyu303_layout_test.npz'
         self.K = np.array([518.857901, 0.000000, 284.582449,
                            0.000000, 519.469611, 208.736166,
@@ -37,6 +41,8 @@ class NYU303(data.Dataset):
         self.layout = annotation['layout']
 
     def __getitem__(self, index):
+        if self.exam:
+            index = np.where(self.ids==969)[0][0]  # we provide one case to debug
         sample = self.ids[index]
         crop_img = os.path.join(
             self.img_adr, 'NYU'+str(sample).zfill(4), 'image', 'NYU'+str(sample).zfill(4)+'.jpg')

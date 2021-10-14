@@ -5,6 +5,7 @@ pretrained:
 num_gpus: 4
 batch_size: 24
 num_workers: 16
+exam: False
 epochs: 51
 lr_step: [30, 40]
 

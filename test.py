@@ -8,7 +8,7 @@ import copy
 from collections import OrderedDict
 
 from datasets import NYU303, CustomDataset, Structured3D
-from models import (ConvertLayout, Detector, DisplayLayout, Loss,
+from models import (ConvertLayout, Detector, DisplayLayout, display2Dseg, Loss,
                     Reconstruction, _validate_colormap, post_process)
 from scipy.optimize import linear_sum_assignment
 
@@ -257,7 +257,7 @@ def test_structured3d(model, criterion, dataloader, device, cfg):
                 ).numpy(), inputs['ilbox'][i].cpu().numpy(), iters)
 
 
-def test_nyu303(model, criterion, dataloader, device):
+def test_nyu303(model, criterion, dataloader, device, cfg):
     model.eval()
     results = []
     for iters, inputs in enumerate(dataloader):
@@ -303,6 +303,10 @@ def test_nyu303(model, criterion, dataloader, device):
 
             results.append([_res, res])
             print(np.mean(np.array(results), axis=0))
+            display2Dseg(img=inputs['fullimg'][i], segs_pred=seg, segs_gt=inputs['iseg'][i].cpu().numpy(), label=inputs['ilbox'][0].cpu().numpy(),
+                         iters=f'{iters}', method='opt_nyu303', draw_gt=1)
+            if cfg.exam:
+                return
 
 
 def test_custom(model, criterion, dataloader, device, cfg):
@@ -360,7 +364,8 @@ def parse():
     parser.add_argument('--data', type=str, default='Structured3D', choices=['Structured3D', 'NYU303', 'CUSTOM'])
     parser.add_argument('--pretrained', type=str, default=None, required=True, help='the pretrained model')
     parser.add_argument('--visual', action='store_true', help='whether to visual the results')
-    parser.add_argument('--num_workers', type=int, default=8)
+    parser.add_argument('--exam', action='store_true', help='test one example on nyu303 dataset')
+    parser.add_argument('--num_workers', type=int, default=0)
 
     args = parser.parse_args()
     return args
@@ -372,11 +377,13 @@ if __name__ == '__main__':
     args = parse()
     cfg.update(vars(args))
 
+    if cfg.exam:
+        assert cfg.data == 'NYU303', 'provide one example of nyu303 to test'
     #  dataset
     if cfg.data == 'Structured3D':
         dataset = Structured3D(cfg.Dataset.Structured3D, 'test')
     elif cfg.data == 'NYU303':
-        dataset = NYU303(cfg.Dataset.NYU303, 'test')
+        dataset = NYU303(cfg.Dataset.NYU303, 'test', exam=cfg.exam)
     elif cfg.data == 'CUSTOM':
         dataset = CustomDataset(cfg.Dataset.CUSTOM, 'test')
     else:
@@ -407,7 +414,7 @@ if __name__ == '__main__':
     if cfg.data == 'Structured3D':
         test_structured3d(model, criterion, dataloader, device, cfg)
     elif cfg.data == 'NYU303':
-        test_nyu303(model, criterion, dataloader, device)
+        test_nyu303(model, criterion, dataloader, device, cfg)
     elif cfg.data == 'CUSTOM':
         test_custom(model, criterion, dataloader, device, cfg)
     else:

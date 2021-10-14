@@ -677,3 +677,107 @@ def DisplayLayout(img, segs_opt, depth_opt, polys_opt, segs_noopt, depth_noopt, 
 
     cv2.imwrite(f'results/{iters}_select.png',
                 np.concatenate([img[:360], img1[:360], img2[:360], img3[:360]], axis=1) * 255)
+
+def display2Dseg(img, segs_pred, segs_gt, label, iters, method=9, draw_gt=0):
+    img = img.cpu().numpy().transpose([1, 2, 0])
+    mean, std = np.array([0.485, 0.456, 0.406]), np.array([0.229, 0.224, 0.225])
+    img = ((img * std) + mean) * 255
+    img = img[:, :, ::-1]
+    h, w = img.shape[0], img.shape[1]
+
+    palette = [
+        (0.12156862745098039, 0.4666666666666667, 0.7058823529411765),
+        (0.6823529411764706, 0.7803921568627451, 0.9098039215686274),
+        (1.0, 0.4980392156862745, 0.054901960784313725),
+        (1.0, 0.7333333333333333, 0.47058823529411764),
+        (0.17254901960784313, 0.6274509803921569, 0.17254901960784313),
+        (0.596078431372549, 0.8745098039215686, 0.5411764705882353),
+        (0.8392156862745098, 0.15294117647058825, 0.1568627450980392),
+        (1.0, 0.596078431372549, 0.5882352941176471),
+        (0.5803921568627451, 0.403921568627451, 0.7411764705882353),
+        (0.7725490196078432, 0.6901960784313725, 0.8352941176470589),
+        (0.5490196078431373, 0.33725490196078434, 0.29411764705882354),
+        (0.7686274509803922, 0.611764705882353, 0.5803921568627451),
+        (0.8901960784313725, 0.4666666666666667, 0.7607843137254902),
+        (0.9686274509803922, 0.7137254901960784, 0.8235294117647058),
+        (0.4980392156862745, 0.4980392156862745, 0.4980392156862745),
+        (0.7803921568627451, 0.7803921568627451, 0.7803921568627451),
+        (0.7372549019607844, 0.7411764705882353, 0.13333333333333333),
+        (0.8588235294117647, 0.8588235294117647, 0.5529411764705883),
+        (0.09019607843137255, 0.7450980392156863, 0.8117647058823529),
+        (0.6196078431372549, 0.8549019607843137, 0.8980392156862745),
+    ]
+    img /= 255
+    palette = np.array(palette)
+    from scipy.optimize import linear_sum_assignment
+    _segs_gt = []
+    _segs_pred = []
+    for i in np.unique(segs_gt):
+        if i == -1:
+            continue
+        else:
+            _segs_gt.append(segs_gt == i)
+    for i in np.unique(segs_pred):
+        if i == -1:
+            continue
+        else:
+            _segs_pred.append(segs_pred == i)
+    _segs_gt = np.array(_segs_gt).astype(np.int)
+    _segs_pred = np.array(_segs_pred).astype(np.int)
+    cost1 = ((_segs_gt[:, np.newaxis] + _segs_pred) == 2).sum((2, 3))
+    r1, c1 = linear_sum_assignment(-1 * cost1)
+    color1 = np.arange(2, len(_segs_gt) + 2)
+    for i in range(len(color1)):
+        if label[i] == 1:
+            color1[i] = 0
+        elif label[i] == 2:
+            color1[i] = 1
+    color2 = []
+    for i in range(len(_segs_pred)):
+        if i in c1:
+            idx = np.where(c1 == i)[0][0]
+            color2.append(color1[r1[idx]])
+        else:
+            color2.append(None)
+    j = 0
+    for i in range(len(color2)):
+        if color2[i] is None:
+            color2[i] = 2 + len(color1) + j
+            j = j + 1
+    bound_pred = np.zeros_like(img[:, :, 0], dtype=np.float32)
+    bound_gt = np.zeros_like(img[:, :, 0], dtype=np.float32)
+    img1 = img
+    for i in range(len(color1)):
+        alpha_fill = (_segs_gt[i] == 1)[..., None].astype(np.float32)
+        sx = cv2.Sobel(alpha_fill, cv2.CV_32F, 1, 0, ksize=5)
+        sy = cv2.Sobel(alpha_fill, cv2.CV_32F, 0, 1, ksize=5)
+        alpha_edge = (sx ** 2 + sy ** 2) ** 0.5
+        alpha_edge /= max(0.001, np.max(alpha_edge))
+        alpha_edge = alpha_edge[..., None]
+        alpha_fill *= 0.5
+        color = palette[color1][i]
+        img1 = img1 * (1 - alpha_fill) + alpha_fill * color
+        img1 = img1 * (1 - alpha_edge) + alpha_edge * color
+        bound_gt[alpha_edge[:, :, 0] > 0] = 1.
+
+    img2 = img
+    for i in range(len(color2)):
+        alpha_fill = (_segs_pred[i] == 1)[..., None].astype(np.float32)
+        sx = cv2.Sobel(alpha_fill, cv2.CV_32F, 1, 0, ksize=5)
+        sy = cv2.Sobel(alpha_fill, cv2.CV_32F, 0, 1, ksize=5)
+        alpha_edge = (sx ** 2 + sy ** 2) ** 0.5
+        alpha_edge /= max(0.001, np.max(alpha_edge))
+        alpha_edge = alpha_edge[..., None]
+        alpha_fill *= 0.5
+        color = palette[color2][i]
+        img2 = img2 * (1 - alpha_fill) + alpha_fill * color
+        img2 = img2 * (1 - alpha_edge) + alpha_edge * color
+
+        bound_pred[alpha_edge[:, :, 0] > 0] = 1
+
+    if not os.path.exists(f'results'):
+        os.mkdir(f'results/')
+    
+    cv2.imwrite(f'results/{iters}.png', img2 * 255)
+    if draw_gt > 0:
+        cv2.imwrite(f'results/{iters}_{draw_gt}.png', img1 * 255)
