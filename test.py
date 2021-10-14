@@ -302,9 +302,11 @@ def test_nyu303(model, criterion, dataloader, device, cfg):
             res = evaluate(inputs['iseg'][i].cpu().numpy(), inputs['idepth'][i].cpu().numpy(), seg, depth)
 
             results.append([_res, res])
-            print(np.mean(np.array(results), axis=0))
-            display2Dseg(img=inputs['fullimg'][i], segs_pred=seg, segs_gt=inputs['iseg'][i].cpu().numpy(), label=inputs['ilbox'][0].cpu().numpy(),
-                         iters=f'{iters}', method='opt_nyu303', draw_gt=1)
+            print(np.mean(np.array(results), axis=0)[:,-1])
+            
+            if cfg.visual:
+                display2Dseg(img=inputs['fullimg'][i], segs_pred=seg, segs_gt=inputs['iseg'][i].cpu().numpy(), label=inputs['ilbox'][0].cpu().numpy(),
+                            iters=f'{iters}', method='opt_nyu303', draw_gt=1)
             if cfg.exam:
                 return
 
