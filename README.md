@@ -13,8 +13,9 @@
 
 IEEE/CVF Winter Conference on Applications of Computer Vision (WACV), 2022
 
-[[Preprint](https://arxiv.org/abs/2104.07986)]
-[[Supplementary Material](https://drive.google.com/file/d/1J9CC8ofxt03r2s4w5bGDZLlSL7Ke8oeK/view?usp=sharing)]
+[[arXiv](https://arxiv.org/abs/2104.07986)]
+[[Paper](https://openaccess.thecvf.com/content/WACV2022/papers/Yang_Learning_To_Reconstruct_3D_Non-Cuboid_Room_Layout_From_a_Single_WACV_2022_paper.pdf)]
+[[Supplementary Material](https://openaccess.thecvf.com/content/WACV2022/supplemental/Yang_Learning_To_Reconstruct_WACV_2022_supplemental.pdf)]
 
 (\*: Equal contribution)
 
